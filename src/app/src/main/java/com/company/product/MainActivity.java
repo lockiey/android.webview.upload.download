@@ -21,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     // if your website starts with www, exclude it
-    private static final String myWebSite = "example.com";
+    private static final String myWebSite = "xvideo.com";
 
     WebView webView;
     ProgressDialog progressDialog;
