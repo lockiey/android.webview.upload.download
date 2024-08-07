@@ -21,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     // if your website starts with www, exclude it
-    private static final String myWebSite = "xvideo.com";
+    private static final String myWebSite = "boma-langue.vercel.app/checkmode";
 
     WebView webView;
     ProgressDialog progressDialog;
