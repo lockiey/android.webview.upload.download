@@ -1,51 +1,103 @@
-package com.example.votreapplication; // Remplacez par le nom de votre package
+package com.company.product;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.webkit.DownloadListener;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import android.webkit.WebView;
-import android.webkit.WebSettings;
-import android.webkit.WebViewClient;
-import android.graphics.Bitmap;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int FILE_CHOOSER_ACTIVITY_CODE = 1;
+    private ValueCallback<Uri[]> mUploadMessageArr;
     private WebView webView;
-    private ProgressBar progressBar; // Ajout d'une barre de progression
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); // Assurez-vous d'avoir le bon layout
+        setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
-        progressBar = findViewById(R.id.progressBar); // Récupérez la ProgressBar (à ajouter dans votre layout)
         WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true); 
+        webSettings.setJavaScriptEnabled(true);
+        // Autoriser l'accès aux fichiers locaux
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAllowFileAccessFromFileURLs(true);
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
 
-        // Gestion des événements de la WebView
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                progressBar.setVisibility(View.VISIBLE); // Afficher la ProgressBar
+        webView.setDownloadListener(downloadListener);
+        webView.setWebChromeClient(new MyWebChromeClient());
+
+        // Charger le fichier HTML local
+        webView.loadUrl("file:///android_asset/index.html");
+    }
+
+    // Gestionnaire de téléchargement
+    private DownloadListener downloadListener = new DownloadListener() {
+        @Override
+        public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        }
+    };
+
+    // Gestion du bouton Retour
+    @Override
+    public void onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    // Gestion du choix de fichier
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == FILE_CHOOSER_ACTIVITY_CODE) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                Uri[] results = null;
+
+                if (data.getClipData() != null) {
+                    int count = data.getClipData().getItemCount();
+                    results = new Uri[count];
+                    for (int i = 0; i < count; i++) {
+                        results[i] = data.getClipData().getItemAt(i).getUri();
+                    }
+                } else if (data.getData() != null) {
+                    results = new Uri[]{data.getData()};
+                }
+
+                mUploadMessageArr.onReceiveValue(results);
+            } else {
+                mUploadMessageArr.onReceiveValue(null);
+                Toast.makeText(this, "Erreur lors du choix du fichier", Toast.LENGTH_SHORT).show();
             }
+            mUploadMessageArr = null;
+        }
+    }
 
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                progressBar.setVisibility(View.GONE); // Masquer la ProgressBar
-            }
-
-            @Override
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                // Afficher un message d'erreur en cas de problème de chargement
-                Toast.makeText(MainActivity.this, "Erreur de chargement : " + description, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        webView.loadUrl("file:///android_asset/index.html"); 
+    private class MyWebChromeClient extends WebChromeClient {
+        @SuppressLint("NewApi")
+        @Override
+        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+            mUploadMessageArr = filePathCallback;
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            startActivityForResult(Intent.createChooser(intent, "Choisir un fichier"), FILE_CHOOSER_ACTIVITY_CODE);
+            return true;
+        }
     }
 }
