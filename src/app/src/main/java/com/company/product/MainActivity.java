@@ -21,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     // if your website starts with www, exclude it
-    private static final String myWebSite = "boma-langue.vercel.app/checkmode";
+    private static final String myWebSite = "https://booble-game-psi.vercel.app";
 
     WebView webView;
     ProgressDialog progressDialog;
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
             // show the error message = no internet access
-            webView.loadUrl("file:///android_asset/no_internet.html");
+            webView.loadUrl("file:///android_asset/index.html");
             // hide the progress bar on error in loading
             progressDialog.dismiss();
             Toast.makeText(getApplicationContext(), "Internet issue", Toast.LENGTH_SHORT).show();

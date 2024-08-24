@@ -1,0 +1,106 @@
+ <!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bubble game</title>
+  <link rel="stylesheet" href="style.css">
+<script src="js/sweetalert2.all.min.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      background-image: url('fond.png');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      overflow: visible; 
+    }
+    #feedback-button {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none; 
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #feedback-button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <button id="feedback-button"> Feedback </button>
+  <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ 
+  <p>Essayer de faire de votre mieux pour un meilleur score historique.</p>
+  <div id="joystick-container"></div>
+  <canvas id="game-canvas" width="400" height="300"></canvas>
+ <script src="js/nipplejs.min.js"></script>
+ 
+ 
+  <script src="script.js"></script>
+  <script>
+    function sendMessageToBot(message) {
+      const botToken ='7471984362:AAGtsVXGCqm4zVXaKvHnSKpsUUp8XNqxJkA'; 
+      const chatId = '-1002244868120';
+      const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Erreur lors de l\'envoi du message.');
+          }
+        })
+        .catch(error => {
+          console.error('Erreur lors de l\'envoi du message :', error);
+        });
+    }
+    document.getElementById('feedback-button').addEventListener('click', () => {
+  // Vérifier la connexion avant d'ouvrir la boîte de dialogue
+  if (navigator.onLine) {
+    Swal.fire({
+      title: 'Vos remarques',
+      input: 'textarea',
+      inputAttributes: {
+        'aria-label': 'Entrez vos remarques ici'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Envoyer',
+      cancelButtonText: 'Annuler',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const message = result.value;
+        // Envoyer le message (pour le moment, juste une console.log)
+        console.log("Message de feedback :", message);
+        Swal.fire('Merci!', 'Vos commentaires ont été envoyés.', 'success');
+      }
+    });
+  } else {
+    // Afficher un message si l'utilisateur est hors ligne
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Vous devez être connecté à Internet pour envoyer un feedback.'
+    });
+  }
+});
+  </script>
+</body>
+<footer>
+  <div>Amusé vous bien !</div>
+</footer>
+</html>
