@@ -40,32 +40,50 @@ public class MainActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(MainActivity.this);
         progressDialog.setCancelable(true);
         progressDialog.setMessage("Loading...");
-        progressDialog.show();
 
-        // get the web-view from the layout
-        webView = findViewById(R.id.webView);
+        // Obtenir l'état de connexion
+        boolean isLoggedIn = checkLoginStatus();
 
-        // for handling Android Device [Back] key press
-        webView.canGoBackOrForward(99);
+        if (isLoggedIn) {
+            // Initialiser le webView si l'utilisateur est connecté
+            webView = findViewById(R.id.webView);
 
-        // handling web page browsing mechanism
-        webView.setWebViewClient(new myWebViewClient());
+            // for handling Android Device [Back] key press
+            webView.canGoBackOrForward(99);
 
-        // handling file upload mechanism
-        webView.setWebChromeClient(new myWebChromeClient());
+            // handling web page browsing mechanism
+            webView.setWebViewClient(new myWebViewClient());
 
-        // some other settings
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setAllowFileAccess(true);
-        settings.setAllowFileAccessFromFileURLs(true);
-        settings.setUserAgentString(new WebView(this).getSettings().getUserAgentString());
+            // handling file upload mechanism
+            webView.setWebChromeClient(new myWebChromeClient());
 
-        // set the download listener
-        webView.setDownloadListener(downloadListener);
+            // some other settings
+            WebSettings settings = webView.getSettings();
+            settings.setJavaScriptEnabled(true);
+            settings.setAllowFileAccess(true);
+            settings.setAllowFileAccessFromFileURLs(true);
+            settings.setUserAgentString(new WebView(this).getSettings().getUserAgentString());
 
-        // load the website
-        webView.loadUrl("https://" + myWebSite);
+            // set the download listener
+            webView.setDownloadListener(downloadListener);
+
+            // Charger la page web uniquement si l'utilisateur est connecté
+            webView.loadUrl("https://" + myWebSite);
+            progressDialog.show(); 
+        } else {
+            // Affichez l'écran d'authentification
+            Intent intent = new Intent(this, AuthenticationActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    private boolean checkLoginStatus() {
+        // Implémenter la logique de vérification de l'état de connexion ici
+        // Par exemple, vérifier s'il y a un jeton d'authentification enregistré 
+        // dans SharedPreferences, ou si l'utilisateur est enregistré dans une base de données.
+
+        // Remplacez la valeur de retour par la logique de vérification
+        return false;
     }
 
     // after the file chosen handled, variables are returned back to MainActivity
