@@ -28,19 +28,21 @@ public class MainActivity extends AppCompatActivity {
         webView = findViewById(R.id.webView);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        // Autoriser l'accès aux fichiers locaux
         webSettings.setAllowFileAccess(true);
         webSettings.setAllowFileAccessFromFileURLs(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
 
+        // Activer le zoom
+        webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setDisplayZoomControls(false); // Masquer les boutons par défaut
+
         webView.setDownloadListener(downloadListener);
         webView.setWebChromeClient(new MyWebChromeClient());
 
-        // Charger le fichier HTML local
         webView.loadUrl("file:///android_asset/index.html");
     }
 
-    // Gestionnaire de téléchargement
     private DownloadListener downloadListener = new DownloadListener() {
         @Override
         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
@@ -50,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    // Gestion du bouton Retour
     @Override
     public void onBackPressed() {
         if (webView.canGoBack()) {
@@ -60,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Gestion du choix de fichier
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
