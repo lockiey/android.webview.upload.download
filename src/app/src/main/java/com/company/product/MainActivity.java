@@ -21,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     // if your website starts with www, exclude it
-    private static final String myWebSite = "boma-langue.vercel.app/checkmode";
+    private static final String myWebSite = "mariam-241.vercel.app/calcule";
 
     WebView webView;
     ProgressDialog progressDialog;
