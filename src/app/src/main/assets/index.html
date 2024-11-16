@@ -1,77 +1,234 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bubble Game.</title>
-  <link rel="stylesheet" href="style1.css"> 
+  <title>Calcul de Moyenne</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
   <style>
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh; 
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .note-input::-webkit-inner-spin-button,
+    .note-input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
       margin: 0;
-      font-family: 'Press Start 2P', cursive; 
-      overflow: hidden; /* Ajouté pour éviter le scroll */
     }
 
-        body {
-      background-image: url('imgB.png');
-      background-size: 100% 100%;
-        }
-
-   .container {
-  text-align: center;
-  padding: 20px;
-  background-color: #240306ec ;
-  border-radius: 10px;
-  transform: translateY(100vh);
-  transition: transform 2.0s; 
-   }
-
-    h1 {
-      font-size: 3em;
-      margin-bottom: 20px;
-      
-      background: linear-gradient(to right, #ff69b4, #33cc33, #66CCCC);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    button {
-      background-color: #40e73a; 
-      border: none;
-      color: white;
-      padding: 15px 32px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s; 
-    }
-
-    button:hover {
-      background-color: #006bfdfd; 
+    .progress-ring {
+      transform: rotate(-90deg);
     }
   </style>
 </head>
-<body>
-    <div class="imgA"></div>
-  <div class="container">
-    <h1>Bubble Game</h1>
-    <a href="game.html"><button>Jouer</button></a><br>
-    <a href="a-propos.html"><button>À propos</button></a>
+<body class="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 min-h-screen p-4 font-sans text-gray-900">
+  <div class="container mx-auto max-w-2xl">
+    <div class="bg-white shadow-2xl rounded-3xl p-8 fade-in-up">
+      <h1 class="text-4xl font-extrabold text-center text-purple-600 mb-6">
+        <i class="fas fa-calculator mr-2"></i>Calcul de la Moyenne
+      </h1>
+      
+      <div class="mb-6 bg-purple-50 p-4 rounded-lg">
+        <p class="text-purple-800 font-medium"><i class="fas fa-info-circle mr-2"></i>Coefficient total: <span id="total-coef">0</span></p>
+      </div>
+
+      <form id="form" class="space-y-6">
+        <div class="space-y-4">
+          <!-- Les champs des matières seront générés ici -->
+        </div>
+
+        <div class="flex gap-4">
+          <button type="submit" class="flex-1 bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-3 rounded-lg font-bold text-lg hover:shadow-xl hover:scale-105 transform transition-all duration-300">
+            <i class="fas fa-calculator mr-2"></i>Calculer
+          </button>
+          <button type="reset" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-bold text-lg hover:bg-gray-300 transition-all duration-300">
+            <i class="fas fa-redo mr-2"></i>Réinitialiser
+          </button>
+        </div>
+      </form>
+
+      <div id="results" class="mt-10 hidden space-y-6 fade-in-up">
+        <div class="bg-gradient-to-r from-yellow-400 to-red-500 p-6 rounded-2xl shadow-lg text-center">
+          <h2 class="text-xl font-bold text-white mb-4">
+            <i class="fas fa-star mr-2"></i>Résultats
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white/20 p-4 rounded-xl">
+              <p class="text-white">Points totaux</p>
+              <p class="text-3xl font-bold text-white" id="total-points">0</p>
+            </div>
+            
+            <div class="bg-white/20 p-4 rounded-xl">
+              <p class="text-white">Moyenne générale</p>
+              <p class="text-3xl font-bold text-white" id="average">0</p>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <svg class="progress-ring mx-auto" width="120" height="120">
+              <circle class="text-gray-300" stroke-width="8" stroke="currentColor" fill="transparent" r="52" cx="60" cy="60"/>
+              <circle class="text-yellow-300 progress-ring__circle" stroke-width="8" stroke="currentColor" fill="transparent" r="52" cx="60" cy="60"/>
+            </svg>
+          </div>
+
+          <p class="text-white mt-4" id="appreciation"></p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+          <h3 class="text-lg font-bold text-gray-700 mb-4">
+            <i class="fas fa-chart-bar mr-2"></i>Statistiques
+          </h3>
+          <div class="space-y-2" id="stats">
+            <!-- Les statistiques seront générées ici -->
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
   <script>
-    // Animation d'entrée
-    document.body.onload = function() {
-      document.querySelector('.container').style.transform = 'translateY(0)';
+    const matieres = {
+      'Mathématiques': 4,
+      'SVT': 4,
+      'Français': 3,
+      'Sciences physiques': 4,
+      'Anglais': 2,
+      'EPS': 2,
+      'Histoire-Géographie': 3,
+      'Philosophie': 2,
+      'Économie': 3,
+      'Espagnol': 2,
+      'Conduite': 1,
     };
+
+    const form = document.getElementById('form');
+    const resultsDiv = document.getElementById('results');
+    const totalPointsSpan = document.getElementById('total-points');
+    const averageSpan = document.getElementById('average');
+    const appreciationP = document.getElementById('appreciation');
+    const statsDiv = document.getElementById('stats');
+    const totalCoefSpan = document.getElementById('total-coef');
+
+    // Calculer et afficher le coefficient total
+    const totalCoef = Object.values(matieres).reduce((a, b) => a + b, 0);
+    totalCoefSpan.textContent = totalCoef;
+
+    // Générer les champs des matières
+    const fieldsContainer = form.querySelector('.space-y-4');
+    for (const matiere in matieres) {
+      const coefficient = matieres[matiere];
+      const field = document.createElement('div');
+      field.classList.add('fade-in-up');
+      field.innerHTML = `
+        <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+          <div class="flex-1">
+            <label class="block text-gray-700 font-medium">
+              ${matiere}
+              <span class="text-purple-500">(coef. ${coefficient})</span>
+            </label>
+            <input type="number" step="0.25" min="0" max="20" name="${matiere}" 
+              class="note-input w-full mt-2 px-4 py-2 border rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all duration-300" 
+              placeholder="Note sur 20"
+              required>
+          </div>
+        </div>
+      `;
+      fieldsContainer.appendChild(field);
+    }
+
+    // Mettre à jour le cercle de progression
+    function setProgress(percent) {
+      const circle = document.querySelector('.progress-ring__circle');
+      const radius = circle.r.baseVal.value;
+      const circumference = radius * 2 * Math.PI;
+      
+      circle.style.strokeDasharray = `${circumference} ${circumference}`;
+      circle.style.strokeDashoffset = circumference;
+
+      const offset = circumference - (percent / 100 * circumference);
+      circle.style.strokeDashoffset = offset;
+    }
+
+    // Obtenir l'appréciation en fonction de la moyenne
+    function getAppreciation(moyenne) {
+      if (moyenne >= 16) return "Excellent! 🌟";
+      if (moyenne >= 14) return "Très bien! 👏";
+      if (moyenne >= 12) return "Bien 👍";
+      if (moyenne >= 10) return "Assez bien 🎯";
+      return "Des efforts à fournir 💪";
+    }
+
+    // Gestion de la soumission du formulaire
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+      let sommePonderee = 0;
+      let sommeCoefficients = 0;
+      const notes = [];
+
+      for (const [matiere, coefficient] of Object.entries(matieres)) {
+        const note = parseFloat(formData.get(matiere));
+        if (isNaN(note) || note < 0 || note > 20) {
+          alert(`La note pour ${matiere} doit être un nombre entre 0 et 20.`);
+          return;
+        }
+        notes.push(note);
+        sommePonderee += note * coefficient;
+        sommeCoefficients += coefficient;
+      }
+
+      const totalPoints = sommePonderee.toFixed(2);
+      const moyenne = (sommePonderee / sommeCoefficients).toFixed(2);
+
+      // Mise à jour des résultats
+      totalPointsSpan.textContent = totalPoints;
+      averageSpan.textContent = `${moyenne}/20`;
+      appreciationP.textContent = getAppreciation(parseFloat(moyenne));
+      
+      // Mise à jour du cercle de progression
+      setProgress((parseFloat(moyenne) / 20) * 100);
+
+      // Calcul et affichage des statistiques
+      const noteMin = Math.min(...notes);
+      const noteMax = Math.max(...notes);
+      const statsHTML = `
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-gray-50 p-3 rounded-lg text-center">
+            <p class="text-gray-600">Note la plus basse</p>
+            <p class="text-xl font-bold text-red-500">${noteMin}/20</p>
+          </div>
+          <div class="bg-gray-50 p-3 rounded-lg text-center">
+            <p class="text-gray-600">Note la plus haute</p>
+            <p class="text-xl font-bold text-green-500">${noteMax}/20</p>
+          </div>
+        </div>
+      `;
+      statsDiv.innerHTML = statsHTML;
+
+      // Afficher les résultats
+      resultsDiv.classList.remove('hidden');
+      resultsDiv.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Réinitialisation du formulaire
+    form.addEventListener('reset', () => {
+      resultsDiv.classList.add('hidden');
+    });
   </script>
 </body>
 </html>
